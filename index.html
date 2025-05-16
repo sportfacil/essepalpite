@@ -1,140 +1,182 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gerador de Palpites - Jogo do Bicho</title>
-
-  <!-- Fonte Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-
-  <style>
-    /* Reset */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #fff;
-      color: #222;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 25px 15px;
-    }
-    h1 {
-      font-weight: 600;
-      font-size: 2.4rem;
-      margin-bottom: 30px;
-      text-align: center;
-      color: #222;
-      user-select: none;
-    }
-    .container {
-      background: #f9f9f9;
-      border-radius: 15px;
-      padding: 30px 35px;
-      max-width: 430px;
-      width: 100%;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-    }
-    select {
-      font-size: 1.1rem;
-      font-weight: 600;
-      padding: 14px 18px;
-      border-radius: 10px;
-      border: 2px solid #ddd;
-      cursor: pointer;
-      background: white;
-      color: #444;
-      transition: border-color 0.25s ease;
-      appearance: none;
-      background-image: url('data:image/svg+xml;utf8,<svg fill="%23444" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: right 15px center;
-      background-size: 18px;
-      user-select: none;
-    }
-    select:hover, select:focus { border-color: #764ba2; outline: none; }
-    button {
-      margin-top: 18px;
-      background-color: #764ba2;
-      color: white;
-      font-size: 1.2rem;
-      font-weight: 700;
-      padding: 14px 0;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      user-select: none;
-    }
-    button:hover { background-color: #5a3685; transform: scale(1.05); }
-    button:active { transform: scale(0.98); }
-    #result {
-      margin-top: 28px;
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 4px 12px rgba(118, 75, 162, 0.15);
-      padding: 25px 28px;
-      min-height: 110px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: #333;
-      text-align: center;
-      user-select: none;
-      position: relative;
-      overflow: hidden;
-    }
-    #result span.animal { display: block; font-size: 2rem; margin-bottom: 12px; color: #764ba2; }
-    #result span.number { color: #ff5e57; font-weight: 800; }
-    option[value="simple"]::before { content: "🦜 "; }
-    option[value="dezena"]::before { content: "🔢 "; }
-    option[value="group"]::before { content: "🟣 "; }
-    option[value="multiple"]::before { content: "🎯 "; }
-    option[value="animalOfDay"]::before { content: "🌟 "; }
-    .anim-simple { animation: fadeInUp 0.7s ease forwards; }
-    .anim-dezena { animation: pulse 1.8s infinite; }
-    .anim-group { animation: slideInLeft 0.8s ease forwards; }
-    .anim-multiple { animation: flicker 1.2s infinite; }
-    .anim-animalOfDay { animation: glow 2.5s ease infinite alternate; }
-    @keyframes fadeInUp { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
-    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.6;} }
-    @keyframes slideInLeft { from {opacity:0;transform:translateX(-30px);} to {opacity:1;transform:translateX(0);} }
-    @keyframes flicker { 0%,100%{opacity:1;}50%{opacity:0.3;} }
-    @keyframes glow { 0%{text-shadow:0 0 10px #764ba2,0 0 15px #764ba2;}100%{text-shadow:0 0 20px #a87be8,0 0 25px #a87be8;} }
-    @media(max-width:480px){ h1{font-size:2rem;} .container{padding:25px 20px;max-width:95vw;} select{font-size:1rem;} button{font-size:1.1rem;padding:12px 0;} #result{font-size:1.15rem;min-height:90px;padding:18px 22px;} #result span.animal{font-size:1.6rem;margin-bottom:10px;} }
-  </style>
-</head>
-<body>
-  <h3>🎲 Gerador de Palpites</h3>
-  <div class="container" role="main">
-    <label for="modeSelect" style="font-weight:600;margin-bottom:6px;display:block;color:#555;">Escolha a modalidade:</label>
-    <select id="modeSelect" aria-label="Selecione a modalidade">
-      <option value="simple">🦜 Palpite Simples</option>
-      <option value="dezena">🔢 Dezena (2 números)</option>
-      <option value="group">🟣 Grupo (4 números)</option>
-      <option value="multiple">🎯 Palpite Múltiplo (3 palpites)</option>
-      <option value="animalOfDay">🌟 Animal do Dia</option>
-    </select>
-    <button id="generateBtn" aria-label="Gerar palpite">Gerar Palpite</button>
-    <div id="result" aria-live="polite" aria-atomic="true" role="region" aria-label="Resultado dos palpites">
-      Selecione uma modalidade e clique em gerar!
-    </div>
+<div style="font-family: 'Inter', sans-serif; max-width: 430px; margin: auto; padding: 20px; background: #f9f9f9; border-radius: 15px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); color: #222;">
+  <h1 style="font-weight: 600; font-size: 2.2rem; margin-bottom: 10px; text-align: center;">🎲 Gerador de Palpites</h1>
+  <div style="background:#f1f1f1; padding:15px 20px; border-radius:10px; margin-bottom:20px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); font-size:0.95rem;">
+    <div style="font-weight:700; font-size:1.1rem; margin-bottom:6px;">⭐ Nosso Palpite</div>
+    🔔 <span id="dailyAnimal">Carregando palpite do dia...</span>
+    <div style="font-size:0.85rem; color:#888; margin-top:5px;">Nosso palpite é apenas sugestão aleatória. Não é garantia de resultado. Jogue com responsabilidade.</div>
   </div>
-  <script>
-    const animalData=[{animal:'Avestruz',numbers:['01','02','03','04'],group:1},{animal:'Águia',numbers:['05','06','07','08'],group:2},{animal:'Burro',numbers:['09','10','11','12'],group:3},{animal:'Borboleta',numbers:['13','14','15','16'],group:4},{animal:'Cachorro',numbers:['17','18','19','20'],group:5},{animal:'Cabra',numbers:['21','22','23','24'],group:6},{animal:'Carneiro',numbers:['25','26','27','28'],group:7},{animal:'Camelo',numbers:['29','30','31','32'],group:8},{animal:'Cobra',numbers:['33','34','35','36'],group:9},{animal:'Coelho',numbers:['37','38','39','40'],group:10},{animal:'Cavalo',numbers:['41','42','43','44'],group:11},{animal:'Elefante',numbers:['45','46','47','48'],group:12},{animal:'Galo',numbers:['49','50','51','52'],group:13},{animal:'Gato',numbers:['53','54','55','56'],group:14},{animal:'Jacaré',numbers:['57','58','59','60'],group:15},{animal:'Leão',numbers:['61','62','63','64'],group:16},{animal:'Macaco',numbers:['65','66','67','68'],group:17},{animal:'Porco',numbers:['69','70','71','72'],group:18},{animal:'Pavão',numbers:['73','74','75','76'],group:19},{animal:'Peru',numbers:['77','78','79','80'],group:20},{animal:'Touro',numbers:['81','82','83','84'],group:21},{animal:'Tigre',numbers:['85','86','87','88'],group:22},{animal:'Urso',numbers:['89','90','91','92'],group:23},{animal:'Veado',numbers:['93','94','95','96'],group:24},{animal:'Vaca',numbers:['97','98','99','00'],group:25}];
-    const btn=document.getElementById('generateBtn'),resultDiv=document.getElementById('result'),modeSelect=document.getElementById('modeSelect');
-    function getRandomInt(max){return Math.floor(Math.random()*max);}    
-    function getAnimalOfDay(){const start=new Date(new Date().getFullYear(),0,0),diff=new Date()-start,oneDay=1000*60*60*24,dayOfYear=Math.floor(diff/oneDay);return animalData[dayOfYear%animalData.length];}
-    function clearAnimations(){resultDiv.classList.remove('anim-simple','anim-dezena','anim-group','anim-multiple','anim-animalOfDay');}
-    btn.addEventListener('click',()=>{const mode=modeSelect.value;let output='';clearAnimations();switch(mode){case'simple':{const idx=getRandomInt(animalData.length),animal=animalData[idx],num=animal.numbers[getRandomInt(animal.numbers.length)];output=`<span class="animal">🦜 ${animal.animal}</span> Número: <span class="number">${num}</span>`;resultDiv.classList.add('anim-simple');break;}case'dezena':{const idx=getRandomInt(animalData.length),animal=animalData[idx],nums=[];while(nums.length<2){const n=animal.numbers[getRandomInt(animal.numbers.length)];if(!nums.includes(n))nums.push(n);}output=`<span class="animal">🔢 ${animal.animal}</span> Dezenas: <span class="number">${nums.join(', ')}</span>`;resultDiv.classList.add('anim-dezena');break;}case'group':{const idx=getRandomInt(animalData.length),animal=animalData[idx];output=`<span class="animal">🟣 ${animal.animal}</span> Grupo: <span class="number">${animal.numbers.join(', ')}</span>`;resultDiv.classList.add('anim-group');break;}case'multiple':{let picks=[];for(let i=0;i<3;i++){const idx=getRandomInt(animalData.length),animal=animalData[idx],num=animal.numbers[getRandomInt(animal.numbers.length)];picks.push(`🦜 ${animal.animal} (${num})`);}output=`🎯 Palpites múltiplos:<br><span class="number">${picks.join(' | ')}</span>`;resultDiv.classList.add('anim-multiple');break;}case'animalOfDay':{const animal=getAnimalOfDay(),num=animal.numbers[getRandomInt(animal.numbers.length)];output=`<span class="animal">🌟 Animal do Dia: ${animal.animal}</span><br>Números: <span class="number">${animal.numbers.join(', ')}</span>`;resultDiv.classList.add('anim-animalOfDay');break;}default:output='Selecione uma modalidade válida.';}resultDiv.innerHTML=output;});
-  </script>
-</body>
-</html>
+  <label for="modeSelect" style="font-weight: 600; margin-bottom: 6px; display: block; color: #555;">Modalidade</label>
+  <select id="modeSelect" style="width: 100%; font-size: 1rem; font-weight: 600; padding: 12px 15px; border-radius: 10px; border: 2px solid #ddd; background: #fff; color: #444; cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=\'%23444\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\'><path d=\'M7 10l5 5 5-5z\'/></svg>'); background-repeat: no-repeat; background-position: right 12px center; margin-bottom: 10px;">
+    <option value="simple" data-emoji="🦜">🦜 Simples</option>
+    <option value="dezena" data-emoji="🔢">🔢 Dezena</option>
+    <option value="group" data-emoji="🟣">🟣 Grupo</option>
+    <option value="multiple" data-emoji="🎯">🎯 Múltiplo</option>
+    <option value="animalOfDay" data-emoji="🌟">🌟 Dia</option>
+  </select>
+  <button id="generateBtn" style="width: 100%; font-size: 1rem; font-weight: 600; padding: 12px 15px; border-radius: 10px; border: none; background: #764ba2; color: #fff; cursor: pointer; margin-bottom: 15px;">Gerar Palpite</button>
+  <div id="result" style="background: #fff; border-radius: 12px; padding: 15px; min-height: 80px; font-weight: 600; color: #333; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center;">Selecione e gere!</div>
+  <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+    <button id="copyBtn" disabled style="flex: 1; margin: 0 5px; font-size: 0.9rem; opacity: 0.5; cursor: not-allowed; padding: 10px; border-radius: 10px; border: 2px solid #ddd; background: #fff;">📋 Copiar</button>
+    <button id="shareBtn" disabled style="flex: 1; margin: 0 5px; font-size: 0.9rem; opacity: 0.5; cursor: not-allowed; padding: 10px; border-radius: 10px; border: 2px solid #ddd; background: #fff;">📲 WhatsApp</button>
+  </div>
+  <div style="margin-top: 15px; background: #f1f1f1; padding: 10px; border-radius: 10px; max-height: 120px; overflow-y: auto; font-size: 0.9rem;">
+    <div style="font-weight: 700; margin-bottom: 8px; font-size: 1rem;">📜 Histórico de Palpites</div>
+    <div id="history">Nenhum palpite gerado ainda.</div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const animalData = [
+      {animal:'Avestruz',numbers:['01','02','03','04']},
+      {animal:'Águia',numbers:['05','06','07','08']},
+      {animal:'Burro',numbers:['09','10','11','12']},
+      {animal:'Borboleta',numbers:['13','14','15','16']},
+      {animal:'Cachorro',numbers:['17','18','19','20']},
+      {animal:'Cabra',numbers:['21','22','23','24']},
+      {animal:'Carneiro',numbers:['25','26','27','28']},
+      {animal:'Camelo',numbers:['29','30','31','32']},
+      {animal:'Cobra',numbers:['33','34','35','36']},
+      {animal:'Coelho',numbers:['37','38','39','40']},
+      {animal:'Cavalo',numbers:['41','42','43','44']},
+      {animal:'Elefante',numbers:['45','46','47','48']},
+      {animal:'Galo',numbers:['49','50','51','52']},
+      {animal:'Gato',numbers:['53','54','55','56']},
+      {animal:'Jacaré',numbers:['57','58','59','60']},
+      {animal:'Leão',numbers:['61','62','63','64']},
+      {animal:'Macaco',numbers:['65','66','67','68']},
+      {animal:'Porco',numbers:['69','70','71','72']},
+      {animal:'Pavão',numbers:['73','74','75','76']},
+      {animal:'Peru',numbers:['77','78','79','80']},
+      {animal:'Touro',numbers:['81','82','83','84']},
+      {animal:'Tigre',numbers:['85','86','87','88']},
+      {animal:'Urso',numbers:['89','90','91','92']},
+      {animal:'Veado',numbers:['93','94','95','96']},
+      {animal:'Vaca',numbers:['97','98','99','00']}
+    ];
+
+    const dailySpan = document.getElementById('dailyAnimal');
+    const btn = document.getElementById('generateBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const shareBtn = document.getElementById('shareBtn');
+    const resultDiv = document.getElementById('result');
+    const historyDiv = document.getElementById('history');
+    const modeSelect = document.getElementById('modeSelect');
+
+    function getAnimalOfDay() {
+      const d = new Date();
+      return animalData[d.getDate() % animalData.length];
+    }
+
+    const day = getAnimalOfDay();
+    dailySpan.textContent = `${day.animal} - ${day.numbers[0]}`;
+
+    let history = JSON.parse(localStorage.getItem('palpites')) || [];
+
+    function renderHistory() {
+      if(!history.length) {
+        historyDiv.textContent = 'Nenhum palpite gerado ainda.';
+        return;
+      }
+      historyDiv.innerHTML = history.map(h => {
+        return `<div>📢 ${h.timestamp} - ${h.emoji} ${h.palpite}</div>`;
+      }).join('');
+    }
+    renderHistory();
+
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+
+    function timestamp() {
+      const d = new Date();
+      return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+    }
+
+    function generateSimple() {
+      const i = getRandomInt(animalData.length);
+      return `${animalData[i].animal} - ${animalData[i].numbers[0]}`;
+    }
+
+    function generateDezena() {
+      const dez = ('0' + getRandomInt(100)).slice(-2);
+      return `Dezena: ${dez}`;
+    }
+
+    function generateGroup() {
+      const group = getRandomInt(25) + 1;
+      const animalsGroup = animalData[group - 1];
+      return `Grupo ${group} - ${animalsGroup.animal}: ${animalsGroup.numbers.join(', ')}`;
+    }
+
+    function generateMultiple() {
+      const chosen = new Set();
+      while(chosen.size < 3) {
+        chosen.add(generateSimple());
+      }
+      return Array.from(chosen).join(' | ');
+    }
+
+    function generateAnimalOfDay() {
+      return `${day.animal} - ${day.numbers[0]}`;
+    }
+
+    function generate() {
+      const selectedOption = modeSelect.options[modeSelect.selectedIndex];
+      const emoji = selectedOption.getAttribute('data-emoji') || '';
+      let palpite = '';
+      switch(modeSelect.value) {
+        case 'simple': palpite = generateSimple(); break;
+        case 'dezena': palpite = generateDezena(); break;
+        case 'group': palpite = generateGroup(); break;
+        case 'multiple': palpite = generateMultiple(); break;
+        case 'animalOfDay': palpite = generateAnimalOfDay(); break;
+        default: palpite = 'Modo inválido.'; 
+      }
+      return {palpite, emoji};
+    }
+
+    function enableButtons() {
+      copyBtn.disabled = false;
+      shareBtn.disabled = false;
+      copyBtn.style.opacity = '1';
+      copyBtn.style.cursor = 'pointer';
+      shareBtn.style.opacity = '1';
+      shareBtn.style.cursor = 'pointer';
+    }
+
+    function disableButtons() {
+      copyBtn.disabled = true;
+      shareBtn.disabled = true;
+      copyBtn.style.opacity = '0.5';
+      copyBtn.style.cursor = 'not-allowed';
+      shareBtn.style.opacity = '0.5';
+      shareBtn.style.cursor = 'not-allowed';
+    }
+
+    btn.addEventListener('click', () => {
+      const {palpite, emoji} = generate();
+      resultDiv.textContent = palpite;
+      history.unshift({timestamp: timestamp(), emoji, palpite});
+      if(history.length > 10) history.pop();
+      localStorage.setItem('palpites', JSON.stringify(history));
+      renderHistory();
+      enableButtons();
+    });
+
+    copyBtn.addEventListener('click', () => {
+      const textToCopy = resultDiv.textContent + '\n\nSite: https://resultadosbanner.com/';
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        alert('✅ Palpite copiado! Agora você pode colar na área de transferência.');
+      });
+    });
+
+    shareBtn.addEventListener('click', () => {
+      const text = encodeURIComponent(resultDiv.textContent + '\nSite: https://resultadosbanner.com/');
+      const url = `https://api.whatsapp.com/send?text=${text}`;
+      window.open(url, '_blank');
+    });
+
+    disableButtons();
+  })();
+</script>
