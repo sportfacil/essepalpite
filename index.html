@@ -1,182 +1,250 @@
-<div style="font-family: 'Inter', sans-serif; max-width: 430px; margin: auto; padding: 20px; background: #f9f9f9; border-radius: 15px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); color: #222;">
-  <h1 style="font-weight: 600; font-size: 2.2rem; margin-bottom: 10px; text-align: center;">🎲 Gerador de Palpites</h1>
-  <div style="background:#f1f1f1; padding:15px 20px; border-radius:10px; margin-bottom:20px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); font-size:0.95rem;">
-    <div style="font-weight:700; font-size:1.1rem; margin-bottom:6px;">⭐ Nosso Palpite</div>
-    🔔 <span id="dailyAnimal">Carregando palpite do dia...</span>
-    <div style="font-size:0.85rem; color:#888; margin-top:5px;">Nosso palpite é apenas sugestão aleatória. Não é garantia de resultado. Jogue com responsabilidade.</div>
+<!-- Cole tudo isso no elemento HTML do Bubble.io -->
+<div>
+  <style>
+    :root {
+      --roxo: #7f00ff;
+      --rosa: #e100ff;
+      --fundo-claro: #f8f8fb;
+      --texto: #222;
+      --destaque: #5c2d91;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    #app {
+      font-family: 'Inter', sans-serif;
+      max-width: 500px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: var(--fundo-claro);
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: var(--destaque);
+      margin-bottom: 1.2rem;
+      font-size: 1.6rem;
+    }
+    .fixo {
+      background: linear-gradient(90deg, var(--roxo), var(--rosa));
+      color: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .fixo .titulo { font-weight: 600; }
+    .fixo .valor { font-weight: 700; margin-top: 0.3rem; }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    select, button {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    select {
+      border: 1px solid #ccc;
+      appearance: none;
+      background: url("data:image/svg+xml;utf8,<svg fill='%235c2d91' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>") no-repeat right 1rem center;
+      background-size: 16px;
+      cursor: pointer;
+    }
+    button {
+      background: linear-gradient(90deg, var(--roxo), var(--rosa));
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s;
+    }
+    button:hover {
+      transform: scale(1.03);
+    }
+    #resultado {
+      background: #fff;
+      border: 2px solid var(--roxo);
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+      font-size: 1.4rem;
+      color: var(--roxo);
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity .4s, transform .4s, box-shadow .6s;
+      white-space: pre-wrap;
+      margin-top: 1rem;
+      user-select: text;
+    }
+    #resultado.mostrar {
+      opacity: 1;
+      transform: scale(1);
+      box-shadow: 0 0 20px rgba(127,0,255,0.3);
+    }
+    #historico {
+      margin-top: 2rem;
+      max-height: 250px;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      border-top: 1px dashed #ccc;
+      padding-top: 0.5rem;
+      color: #444;
+    }
+    #historico h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--destaque);
+      text-align: center;
+    }
+    #historico div {
+      padding: 0.4rem 0;
+      border-bottom: 1px dashed #eee;
+      font-family: monospace;
+    }
+  </style>
+
+  <div id="app">
+    <h2>🎯 Gerador de Palpites</h2>
+
+    <div class="fixo">
+      <div class="titulo">⭐ Nosso Palpite do Dia</div>
+      <div class="valor" id="fixoValor">Carregando...</div>
+    </div>
+
+    <label for="modo">Escolha a modalidade:</label>
+    <select id="modo">
+      <option value="simples">🦜 Simples</option>
+      <option value="dezena">🔢 Dezena</option>
+      <option value="grupo">🟣 Grupo</option>
+      <option value="multiplo">🎲 Múltiplo</option>
+      <option value="doDia">🌟 Animal do Dia</option>
+    </select>
+
+    <button id="btnGerar">Gerar Palpite</button>
+
+    <div id="resultado">Selecione uma modalidade e clique em gerar!</div>
+
+    <div id="historico">
+      <h3>📜 Histórico de Palpites</h3>
+      <div id="listaHistorico"></div>
+    </div>
   </div>
-  <label for="modeSelect" style="font-weight: 600; margin-bottom: 6px; display: block; color: #555;">Modalidade</label>
-  <select id="modeSelect" style="width: 100%; font-size: 1rem; font-weight: 600; padding: 12px 15px; border-radius: 10px; border: 2px solid #ddd; background: #fff; color: #444; cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=\'%23444\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\'><path d=\'M7 10l5 5 5-5z\'/></svg>'); background-repeat: no-repeat; background-position: right 12px center; margin-bottom: 10px;">
-    <option value="simple" data-emoji="🦜">🦜 Simples</option>
-    <option value="dezena" data-emoji="🔢">🔢 Dezena</option>
-    <option value="group" data-emoji="🟣">🟣 Grupo</option>
-    <option value="multiple" data-emoji="🎯">🎯 Múltiplo</option>
-    <option value="animalOfDay" data-emoji="🌟">🌟 Dia</option>
-  </select>
-  <button id="generateBtn" style="width: 100%; font-size: 1rem; font-weight: 600; padding: 12px 15px; border-radius: 10px; border: none; background: #764ba2; color: #fff; cursor: pointer; margin-bottom: 15px;">Gerar Palpite</button>
-  <div id="result" style="background: #fff; border-radius: 12px; padding: 15px; min-height: 80px; font-weight: 600; color: #333; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center;">Selecione e gere!</div>
-  <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-    <button id="copyBtn" disabled style="flex: 1; margin: 0 5px; font-size: 0.9rem; opacity: 0.5; cursor: not-allowed; padding: 10px; border-radius: 10px; border: 2px solid #ddd; background: #fff;">📋 Copiar</button>
-    <button id="shareBtn" disabled style="flex: 1; margin: 0 5px; font-size: 0.9rem; opacity: 0.5; cursor: not-allowed; padding: 10px; border-radius: 10px; border: 2px solid #ddd; background: #fff;">📲 WhatsApp</button>
-  </div>
-  <div style="margin-top: 15px; background: #f1f1f1; padding: 10px; border-radius: 10px; max-height: 120px; overflow-y: auto; font-size: 0.9rem;">
-    <div style="font-weight: 700; margin-bottom: 8px; font-size: 1rem;">📜 Histórico de Palpites</div>
-    <div id="history">Nenhum palpite gerado ainda.</div>
-  </div>
+
+  <script>
+    (function () {
+      const animais = [
+        { nome: 'Avestruz', grupo: 1, nums: [1, 2, 3, 4] },
+        { nome: 'Águia', grupo: 2, nums: [5, 6, 7, 8] },
+        { nome: 'Burro', grupo: 3, nums: [9, 10, 11, 12] },
+        { nome: 'Borboleta', grupo: 4, nums: [13, 14, 15, 16] },
+        { nome: 'Cachorro', grupo: 5, nums: [17, 18, 19, 20] },
+        { nome: 'Cabra', grupo: 6, nums: [21, 22, 23, 24] },
+        { nome: 'Carneiro', grupo: 7, nums: [25, 26, 27, 28] },
+        { nome: 'Camelo', grupo: 8, nums: [29, 30, 31, 32] },
+        { nome: 'Cobra', grupo: 9, nums: [33, 34, 35, 36] },
+        { nome: 'Coelho', grupo: 10, nums: [37, 38, 39, 40] },
+        { nome: 'Cavalo', grupo: 11, nums: [41, 42, 43, 44] },
+        { nome: 'Elefante', grupo: 12, nums: [45, 46, 47, 48] },
+        { nome: 'Galo', grupo: 13, nums: [49, 50, 51, 52] },
+        { nome: 'Gato', grupo: 14, nums: [53, 54, 55, 56] },
+        { nome: 'Jacaré', grupo: 15, nums: [57, 58, 59, 60] },
+        { nome: 'Leão', grupo: 16, nums: [61, 62, 63, 64] },
+        { nome: 'Macaco', grupo: 17, nums: [65, 66, 67, 68] },
+        { nome: 'Porco', grupo: 18, nums: [69, 70, 71, 72] },
+        { nome: 'Pavão', grupo: 19, nums: [73, 74, 75, 76] },
+        { nome: 'Peru', grupo: 20, nums: [77, 78, 79, 80] },
+      ];
+
+      const fixoEl = document.getElementById('fixoValor');
+      const resultadoEl = document.getElementById('resultado');
+      const historicoLista = document.getElementById('listaHistorico');
+      const btn = document.getElementById('btnGerar');
+
+      function pad2(n) {
+        return n.toString().padStart(2, '0');
+      }
+
+      function dataHoraAtual() {
+        const agora = new Date();
+        const d = String(agora.getDate()).padStart(2, '0');
+        const m = String(agora.getMonth() + 1).padStart(2, '0');
+        const y = agora.getFullYear();
+        const h = String(agora.getHours()).padStart(2, '0');
+        const min = String(agora.getMinutes()).padStart(2, '0');
+        return `${d}/${m}/${y} ${h}:${min}`;
+      }
+
+      function getDailyIndex() {
+        const d = new Date();
+        const key = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+        return key % animais.length;
+      }
+
+      function showFixo() {
+        const a = animais[getDailyIndex()];
+        fixoEl.innerText = `${pad2(a.grupo)} - ${a.nome} - ${a.nums.map(pad2).join(', ')}`;
+      }
+
+      function salvarHistorico(txt) {
+        const dados = JSON.parse(localStorage.getItem('palpites') || '[]');
+        dados.unshift(txt);
+        localStorage.setItem('palpites', JSON.stringify(dados));
+      }
+
+      function carregarHistorico() {
+        const dados = JSON.parse(localStorage.getItem('palpites') || '[]');
+        dados.forEach(linha => {
+          const div = document.createElement('div');
+          div.textContent = linha;
+          historicoLista.appendChild(div);
+        });
+      }
+
+      function gerar() {
+        const modo = document.getElementById('modo').value;
+        let txt = '';
+        if (modo === 'simples') {
+          const a = animais[Math.floor(Math.random() * animais.length)];
+          txt = `${pad2(a.grupo)} - ${a.nome} - ${a.nums.map(pad2).join(', ')}`;
+        } else if (modo === 'dezena') {
+          const arr = [];
+          while (arr.length < 4) {
+            const n = 1 + Math.floor(Math.random() * 80);
+            if (!arr.includes(n)) arr.push(n);
+          }
+          txt = `Dezenas: ${arr.map(pad2).join(' - ')}`;
+        } else if (modo === 'grupo') {
+          const a = animais[Math.floor(Math.random() * animais.length)];
+          txt = `Grupo ${pad2(a.grupo)} - ${a.nome}`;
+        } else if (modo === 'multiplo') {
+          const arr = [];
+          for (let i = 0; i < 3; i++) {
+            const a = animais[Math.floor(Math.random() * animais.length)];
+            const n = a.nums[Math.floor(Math.random() * a.nums.length)];
+            arr.push(pad2(n));
+          }
+          txt = `Múltiplos:\n${arr.join('\n')}`;
+        } else if (modo === 'doDia') {
+          const a = animais[getDailyIndex()];
+          txt = `${pad2(a.grupo)} - ${a.nome} - ${a.nums.map(pad2).join(', ')}`;
+        }
+
+        resultadoEl.innerText = txt;
+        resultadoEl.classList.add('mostrar');
+
+        const registro = `[${dataHoraAtual()}] ${txt}`;
+        const div = document.createElement('div');
+        div.textContent = registro;
+        historicoLista.insertBefore(div, historicoLista.firstChild);
+        salvarHistorico(registro);
+      }
+
+      btn.addEventListener('click', gerar);
+      showFixo();
+      carregarHistorico();
+    })();
+  </script>
 </div>
-
-<script>
-  (() => {
-    const animalData = [
-      {animal:'Avestruz',numbers:['01','02','03','04']},
-      {animal:'Águia',numbers:['05','06','07','08']},
-      {animal:'Burro',numbers:['09','10','11','12']},
-      {animal:'Borboleta',numbers:['13','14','15','16']},
-      {animal:'Cachorro',numbers:['17','18','19','20']},
-      {animal:'Cabra',numbers:['21','22','23','24']},
-      {animal:'Carneiro',numbers:['25','26','27','28']},
-      {animal:'Camelo',numbers:['29','30','31','32']},
-      {animal:'Cobra',numbers:['33','34','35','36']},
-      {animal:'Coelho',numbers:['37','38','39','40']},
-      {animal:'Cavalo',numbers:['41','42','43','44']},
-      {animal:'Elefante',numbers:['45','46','47','48']},
-      {animal:'Galo',numbers:['49','50','51','52']},
-      {animal:'Gato',numbers:['53','54','55','56']},
-      {animal:'Jacaré',numbers:['57','58','59','60']},
-      {animal:'Leão',numbers:['61','62','63','64']},
-      {animal:'Macaco',numbers:['65','66','67','68']},
-      {animal:'Porco',numbers:['69','70','71','72']},
-      {animal:'Pavão',numbers:['73','74','75','76']},
-      {animal:'Peru',numbers:['77','78','79','80']},
-      {animal:'Touro',numbers:['81','82','83','84']},
-      {animal:'Tigre',numbers:['85','86','87','88']},
-      {animal:'Urso',numbers:['89','90','91','92']},
-      {animal:'Veado',numbers:['93','94','95','96']},
-      {animal:'Vaca',numbers:['97','98','99','00']}
-    ];
-
-    const dailySpan = document.getElementById('dailyAnimal');
-    const btn = document.getElementById('generateBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const shareBtn = document.getElementById('shareBtn');
-    const resultDiv = document.getElementById('result');
-    const historyDiv = document.getElementById('history');
-    const modeSelect = document.getElementById('modeSelect');
-
-    function getAnimalOfDay() {
-      const d = new Date();
-      return animalData[d.getDate() % animalData.length];
-    }
-
-    const day = getAnimalOfDay();
-    dailySpan.textContent = `${day.animal} - ${day.numbers[0]}`;
-
-    let history = JSON.parse(localStorage.getItem('palpites')) || [];
-
-    function renderHistory() {
-      if(!history.length) {
-        historyDiv.textContent = 'Nenhum palpite gerado ainda.';
-        return;
-      }
-      historyDiv.innerHTML = history.map(h => {
-        return `<div>📢 ${h.timestamp} - ${h.emoji} ${h.palpite}</div>`;
-      }).join('');
-    }
-    renderHistory();
-
-    function getRandomInt(max) {
-      return Math.floor(Math.random() * max);
-    }
-
-    function timestamp() {
-      const d = new Date();
-      return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
-    }
-
-    function generateSimple() {
-      const i = getRandomInt(animalData.length);
-      return `${animalData[i].animal} - ${animalData[i].numbers[0]}`;
-    }
-
-    function generateDezena() {
-      const dez = ('0' + getRandomInt(100)).slice(-2);
-      return `Dezena: ${dez}`;
-    }
-
-    function generateGroup() {
-      const group = getRandomInt(25) + 1;
-      const animalsGroup = animalData[group - 1];
-      return `Grupo ${group} - ${animalsGroup.animal}: ${animalsGroup.numbers.join(', ')}`;
-    }
-
-    function generateMultiple() {
-      const chosen = new Set();
-      while(chosen.size < 3) {
-        chosen.add(generateSimple());
-      }
-      return Array.from(chosen).join(' | ');
-    }
-
-    function generateAnimalOfDay() {
-      return `${day.animal} - ${day.numbers[0]}`;
-    }
-
-    function generate() {
-      const selectedOption = modeSelect.options[modeSelect.selectedIndex];
-      const emoji = selectedOption.getAttribute('data-emoji') || '';
-      let palpite = '';
-      switch(modeSelect.value) {
-        case 'simple': palpite = generateSimple(); break;
-        case 'dezena': palpite = generateDezena(); break;
-        case 'group': palpite = generateGroup(); break;
-        case 'multiple': palpite = generateMultiple(); break;
-        case 'animalOfDay': palpite = generateAnimalOfDay(); break;
-        default: palpite = 'Modo inválido.'; 
-      }
-      return {palpite, emoji};
-    }
-
-    function enableButtons() {
-      copyBtn.disabled = false;
-      shareBtn.disabled = false;
-      copyBtn.style.opacity = '1';
-      copyBtn.style.cursor = 'pointer';
-      shareBtn.style.opacity = '1';
-      shareBtn.style.cursor = 'pointer';
-    }
-
-    function disableButtons() {
-      copyBtn.disabled = true;
-      shareBtn.disabled = true;
-      copyBtn.style.opacity = '0.5';
-      copyBtn.style.cursor = 'not-allowed';
-      shareBtn.style.opacity = '0.5';
-      shareBtn.style.cursor = 'not-allowed';
-    }
-
-    btn.addEventListener('click', () => {
-      const {palpite, emoji} = generate();
-      resultDiv.textContent = palpite;
-      history.unshift({timestamp: timestamp(), emoji, palpite});
-      if(history.length > 10) history.pop();
-      localStorage.setItem('palpites', JSON.stringify(history));
-      renderHistory();
-      enableButtons();
-    });
-
-    copyBtn.addEventListener('click', () => {
-      const textToCopy = resultDiv.textContent + '\n\nSite: https://resultadosbanner.com/';
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        alert('✅ Palpite copiado! Agora você pode colar na área de transferência.');
-      });
-    });
-
-    shareBtn.addEventListener('click', () => {
-      const text = encodeURIComponent(resultDiv.textContent + '\nSite: https://resultadosbanner.com/');
-      const url = `https://api.whatsapp.com/send?text=${text}`;
-      window.open(url, '_blank');
-    });
-
-    disableButtons();
-  })();
-</script>
