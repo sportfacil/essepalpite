@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gerador do Jogo do Bicho</title>
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0 }
+    body, html {
+      margin:0; padding:0;
+      font-family:'Arial',sans-serif;
+      background:linear-gradient(to right, #f2f2f2, #ffffff);
+      color:#222;
+      overflow-x:hidden;
+    }
+    #app { padding:20px; max-width:600px; margin:auto; text-align:center; }
+
+    .frase-dia {
+      background:#fff8dc;
+      border-radius:15px;
+      padding:20px;
+      font-size:1.2rem;
+      margin-bottom:30px;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+      animation:fadein 1s ease-in-out;
+      color:#333;
+    }
+    .tab-container { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:20px; }
+    .tab-container.hidden { display:none; }
+
+    .tab-container button {
+      background:#e0e0e0;
+      border:none;
+      border-radius:25px;
+      padding:10px 20px;
+      color:#333;
+      font-size:0.95rem;
+      cursor:pointer;
+      transition:0.3s;
+    }
+    .tab-container button:hover {
+      background:#d1d1d1;
+      transform:scale(1.05);
+    }
+
+    #btnBack {
+      display:none;
+      margin-bottom:20px;
+      background:#ff6b6b;
+      color:#fff;
+      border:none;
+      padding:8px 12px;
+      border-radius:6px;
+      cursor:pointer;
+      transition:background 0.2s;
+    }
+    #btnBack:hover { background:#ee5253; }
+
+    .section { display:none; padding-top:20px; animation:fadein 0.5s; }
+    .section.active { display:block; }
+
+    #historico {
+      margin-top:30px;
+      font-size:0.9rem;
+      color:#555;
+      text-align:left;
+      max-height:150px;
+      overflow-y:auto;
+      padding-right:6px;
+    }
+
+    .highlight {
+      font-size:1.4rem;
+      font-weight:bold;
+      color:#0077cc;
+      margin-top:10px;
+    }
+
+    textarea {
+      width:100%;
+      height:80px;
+      padding:10px;
+      border-radius:8px;
+      resize:none;
+      font-size:1rem;
+      margin-bottom:15px;
+      border:1px solid #ccc;
+    }
+
+    .slot-reel {
+      display:inline-block;
+      font-size:2rem;
+      width:40px;
+      height:40px;
+      margin:0 5px;
+      background:#f1f1f1;
+      border-radius:5px;
+      animation:slotspin 1.2s ease-in-out;
+      color:#007700;
+      text-shadow:0 0 5px #00cc00;
+    }
+
+    .botao-bonito {
+      background:#00b894;
+      color:#fff;
+      border:none;
+      padding:12px 20px;
+      font-size:1rem;
+      border-radius:25px;
+      cursor:pointer;
+      transition:0.3s;
+      box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    }
+    .botao-bonito:hover {
+      background:#26de81;
+      transform:scale(1.05);
+    }
+
+    @keyframes fadein {
+      from {opacity:0; transform:translateY(10px);}
+      to {opacity:1; transform:translateY(0);}
+    }
+    @keyframes slotspin {
+      0% {transform:rotateX(0deg);}
+      50% {transform:rotateX(180deg);}
+      100% {transform:rotateX(360deg);}
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const frases = ["Você nasceu para vencer.","Acredite no seu potencial.","Hoje é o dia da virada.","A sorte sorri para os corajosos.","O impossível é só uma opinião.","Você está mais perto do que imagina.","Seja sua melhor versão.","O sucesso começa com um passo.","A vida recompensa os persistentes.","Nunca subestime seu poder de recomeçar.","A força está dentro de você.","Você é luz onde passa.","Seja firme, seja forte, seja você.","Transforme o medo em coragem.","Confie no seu caminho.","Você merece o melhor!","Hoje tudo pode acontecer.","Respira fundo. Você vai conseguir.","Grandes sonhos exigem grandes atitudes.","O universo conspira a seu favor."];
+    while(frases.length < 400) frases.push(frases[Math.floor(Math.random()*frases.length)]);
+
+    const grupos = {1:"Avestruz",2:"Águia",3:"Burro",4:"Borboleta",5:"Cachorro",6:"Cabra",7:"Carneiro",8:"Camelo",9:"Cobra",10:"Coelho",11:"Cavalo",12:"Elefante",13:"Galo",14:"Gato",15:"Jacaré",16:"Leão",17:"Macaco",18:"Porco",19:"Pavão",20:"Peru",21:"Touro",22:"Tigre",23:"Urso",24:"Veado",25:"Vaca"};
+
+    function diaIndex() {
+      const d = new Date();
+      return (Math.floor(d/86400000)) % frases.length;
+    }
+    function gerarNumero(d) {
+      return Math.floor(Math.random()*Math.pow(10,d)).toString().padStart(d,'0');
+    }
+    function gravaHist(botao, texto) {
+      const h = JSON.parse(localStorage.getItem('histBicho')||'[]');
+      h.unshift({modo:botao,t:new Date().toLocaleString(),txt:texto});
+      localStorage.setItem('histBicho',JSON.stringify(h.slice(0,20)));
+      atualizarHistorico();
+    }
+    function atualizarHistorico() {
+      const h = JSON.parse(localStorage.getItem('histBicho')||'[]');
+      if(!h.length) return;
+      document.getElementById('historico').innerHTML = '<h3>🕘 Histórico</h3>' + h.map(e=>`<div>🔹 [${e.t}] ${e.modo}: ${e.txt}</div>`).join('');
+    }
+
+    function render() {
+      document.getElementById('app').innerHTML = `
+        <div class="frase-dia">${frases[diaIndex()]}</div>
+        <div class="tab-container" id="tabs">
+          <button onclick="executar('Palpite do Dia')">🔮 Palpite do Dia</button>
+          <button onclick="executar('Palpite do Sonho')">🌙 Palpite do Sonho</button>
+          <button onclick="executar('Modo Relâmpago')">⚡ Modo Relâmpago</button>
+          <button onclick="executar('Bicho Raro')">🐲 Bicho Raro</button>
+          <button onclick="executar('Slot Machine')">🎰 Slot Machine</button>
+          <button onclick="executar('Temático')">🎲 Temático</button>
+          <button onclick="executar('Místico')">🔮 Místico</button>
+        </div>
+        <button id="btnBack" onclick="voltar()">← Voltar</button>
+        <div id="resultado" class="section"></div>
+        <div id="historico"></div>
+      `;
+      document.getElementById('btnBack').style.display='none';
+      atualizarHistorico();
+    }
+
+    function executar(nome) {
+      document.getElementById('tabs').classList.add('hidden');
+      document.getElementById('btnBack').style.display='block';
+      const resultado = document.getElementById('resultado');
+      resultado.classList.add('active');
+
+      if (nome === 'Palpite do Sonho') {
+        resultado.innerHTML = `
+          <textarea id="textoSonho" placeholder="Descreva seu sonho..."></textarea>
+          <button class="botao-bonito" onclick="gerarPalpiteSonho()">🔍 Gerar Palpite</button>
+          <div id="respostaSonho" class="highlight"></div>
+        `;
+      } else if (nome === 'Slot Machine') {
+        const numeros = [gerarNumero(1), gerarNumero(1), gerarNumero(1), gerarNumero(1)];
+        resultado.innerHTML = '<div class="highlight">🎰 Resultado: ' + numeros.map(n => `<span class='slot-reel'>${n}</span>`).join('') + '</div>';
+        gravaHist(nome, numeros.join(' '));
+      } else {
+        const nums = `${gerarNumero(2)} ${gerarNumero(2)} ${gerarNumero(2)}`;
+        resultado.innerHTML = `<div class="highlight">✨ Você clicou em: ${nome}<br/>Resultado: ${nums}</div>`;
+        gravaHist(nome, nums);
+      }
+    }
+
+    function gerarPalpiteSonho() {
+      const txt = document.getElementById('textoSonho').value.trim();
+      const numero = gerarNumero(2);
+      const grupo = grupos[(numero % 25)+1];
+      const resultado = `Para o sonho "${txt}", o número é ${numero} - Grupo: ${grupo}`;
+      document.getElementById('respostaSonho').textContent = resultado;
+      gravaHist('Palpite do Sonho', resultado);
+    }
+
+    function voltar() {
+      document.getElementById('tabs').classList.remove('hidden');
+      document.getElementById('btnBack').style.display='none';
+      document.getElementById('resultado').classList.remove('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', render);
+  </script>
+</body>
+</html>
