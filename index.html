@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br" >
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,10 +10,7 @@
 
   <style>
     /* Reset */
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
       background: #fff;
@@ -24,7 +21,6 @@
       align-items: center;
       padding: 25px 15px;
     }
-
     h1 {
       font-weight: 600;
       font-size: 2.4rem;
@@ -33,7 +29,6 @@
       color: #222;
       user-select: none;
     }
-
     .container {
       background: #f9f9f9;
       border-radius: 15px;
@@ -45,7 +40,6 @@
       flex-direction: column;
       align-items: stretch;
     }
-
     select {
       font-size: 1.1rem;
       font-weight: 600;
@@ -63,11 +57,7 @@
       background-size: 18px;
       user-select: none;
     }
-    select:hover, select:focus {
-      border-color: #764ba2;
-      outline: none;
-    }
-
+    select:hover, select:focus { border-color: #764ba2; outline: none; }
     button {
       margin-top: 18px;
       background-color: #764ba2;
@@ -81,14 +71,8 @@
       transition: background-color 0.3s ease, transform 0.2s ease;
       user-select: none;
     }
-    button:hover {
-      background-color: #5a3685;
-      transform: scale(1.05);
-    }
-    button:active {
-      transform: scale(0.98);
-    }
-
+    button:hover { background-color: #5a3685; transform: scale(1.05); }
+    button:active { transform: scale(0.98); }
     #result {
       margin-top: 28px;
       background: #fff;
@@ -108,134 +92,30 @@
       position: relative;
       overflow: hidden;
     }
-
-    #result span.animal {
-      display: block;
-      font-size: 2rem;
-      margin-bottom: 12px;
-      color: #764ba2;
-    }
-    #result span.number {
-      color: #ff5e57;
-      font-weight: 800;
-    }
-
-    /* Emojis nas opções do select */
-    option {
-      font-weight: 600;
-    }
+    #result span.animal { display: block; font-size: 2rem; margin-bottom: 12px; color: #764ba2; }
+    #result span.number { color: #ff5e57; font-weight: 800; }
     option[value="simple"]::before { content: "🦜 "; }
     option[value="dezena"]::before { content: "🔢 "; }
     option[value="group"]::before { content: "🟣 "; }
     option[value="multiple"]::before { content: "🎯 "; }
     option[value="animalOfDay"]::before { content: "🌟 "; }
-
-    /* Animações diferentes para cada modalidade */
-
-    /* Palpite simples - Fade in */
-    .anim-simple {
-      animation: fadeInUp 0.7s ease forwards;
-    }
-
-    /* Dezena - Pulse */
-    .anim-dezena {
-      animation: pulse 1.8s infinite;
-    }
-
-    /* Grupo - Slide in from left */
-    .anim-group {
-      animation: slideInLeft 0.8s ease forwards;
-    }
-
-    /* Múltiplo - Flicker */
-    .anim-multiple {
-      animation: flicker 1.2s infinite;
-    }
-
-    /* Animal do dia - Glow */
-    .anim-animalOfDay {
-      animation: glow 2.5s ease infinite alternate;
-    }
-
-    /* Keyframes */
-    @keyframes fadeInUp {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-    @keyframes pulse {
-      0%, 100% {opacity: 1;}
-      50% {opacity: 0.6;}
-    }
-    @keyframes slideInLeft {
-      from {opacity: 0; transform: translateX(-30px);}
-      to {opacity: 1; transform: translateX(0);}
-    }
-    @keyframes flicker {
-      0%, 100% {opacity: 1;}
-      50% {opacity: 0.3;}
-    }
-    @keyframes glow {
-      0% {
-        text-shadow: 0 0 10px #764ba2, 0 0 15px #764ba2;
-      }
-      100% {
-        text-shadow: 0 0 20px #a87be8, 0 0 25px #a87be8;
-      }
-    }
-
-    /* Responsividade */
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 2rem;
-      }
-      .container {
-        padding: 25px 20px;
-        max-width: 95vw;
-      }
-      select {
-        font-size: 1rem;
-      }
-      button {
-        font-size: 1.1rem;
-        padding: 12px 0;
-      }
-      #result {
-        font-size: 1.15rem;
-        min-height: 90px;
-        padding: 18px 22px;
-      }
-      #result span.animal {
-        font-size: 1.6rem;
-        margin-bottom: 10px;
-      }
-    }
-
-    /* Link rodapé */
-    footer {
-      margin-top: 30px;
-      font-size: 0.9rem;
-      color: #666;
-      text-align: center;
-      user-select: none;
-    }
-    footer a {
-      color: #764ba2;
-      font-weight: 600;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-    footer a:hover {
-      color: #a87be8;
-      text-decoration: underline;
-    }
+    .anim-simple { animation: fadeInUp 0.7s ease forwards; }
+    .anim-dezena { animation: pulse 1.8s infinite; }
+    .anim-group { animation: slideInLeft 0.8s ease forwards; }
+    .anim-multiple { animation: flicker 1.2s infinite; }
+    .anim-animalOfDay { animation: glow 2.5s ease infinite alternate; }
+    @keyframes fadeInUp { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
+    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.6;} }
+    @keyframes slideInLeft { from {opacity:0;transform:translateX(-30px);} to {opacity:1;transform:translateX(0);} }
+    @keyframes flicker { 0%,100%{opacity:1;}50%{opacity:0.3;} }
+    @keyframes glow { 0%{text-shadow:0 0 10px #764ba2,0 0 15px #764ba2;}100%{text-shadow:0 0 20px #a87be8,0 0 25px #a87be8;} }
+    @media(max-width:480px){ h1{font-size:2rem;} .container{padding:25px 20px;max-width:95vw;} select{font-size:1rem;} button{font-size:1.1rem;padding:12px 0;} #result{font-size:1.15rem;min-height:90px;padding:18px 22px;} #result span.animal{font-size:1.6rem;margin-bottom:10px;} }
   </style>
 </head>
 <body>
-
-  <h1>🎲 Gerador de Palpites - Jogo do Bicho</h1>
-
+  <h1>🎲 Gerador de Palpites</h1>
   <div class="container" role="main">
-    <label for="modeSelect" style="font-weight:600; margin-bottom:6px; display:block; color:#555;">Escolha a modalidade:</label>
+    <label for="modeSelect" style="font-weight:600;margin-bottom:6px;display:block;color:#555;">Escolha a modalidade:</label>
     <select id="modeSelect" aria-label="Selecione a modalidade">
       <option value="simple">🦜 Palpite Simples</option>
       <option value="dezena">🔢 Dezena (2 números)</option>
@@ -243,138 +123,18 @@
       <option value="multiple">🎯 Palpite Múltiplo (3 palpites)</option>
       <option value="animalOfDay">🌟 Animal do Dia</option>
     </select>
-
     <button id="generateBtn" aria-label="Gerar palpite">Gerar Palpite</button>
-
     <div id="result" aria-live="polite" aria-atomic="true" role="region" aria-label="Resultado dos palpites">
       Selecione uma modalidade e clique em gerar!
     </div>
   </div>
-
-  <footer>
-    Visite também <a href="https://resultadosbanner.com/" target="_blank" rel="noopener noreferrer" aria-label="Resultados Banner">resultadosbanner.com</a> para mais resultados e informações.<br />
-    © 2025 - Jogo do Bicho Palpites
-  </footer>
-
   <script>
-    const animalData = [
-      { animal: 'Avestruz', numbers: ['01', '02', '03', '04'], group: 1 },
-      { animal: 'Águia', numbers: ['05', '06', '07', '08'], group: 2 },
-      { animal: 'Burro', numbers: ['09', '10', '11', '12'], group: 3 },
-      { animal: 'Borboleta', numbers: ['13', '14', '15', '16'], group: 4 },
-      { animal: 'Cachorro', numbers: ['17', '18', '19', '20'], group: 5 },
-      { animal: 'Cabra', numbers: ['21', '22', '23', '24'], group: 6 },
-      { animal: 'Carneiro', numbers: ['25', '26', '27', '28'], group: 7 },
-      { animal: 'Camelo', numbers: ['29', '30', '31', '32'], group: 8 },
-      { animal: 'Cobra', numbers: ['33', '34', '35', '36'], group: 9 },
-      { animal: 'Coelho', numbers: ['37', '38', '39', '40'], group: 10 },
-      { animal: 'Cavalo', numbers: ['41', '42', '43', '44'], group: 11 },
-      { animal: 'Elefante', numbers: ['45', '46', '47', '48'], group: 12 },
-      { animal: 'Galo', numbers: ['49', '50', '51', '52'], group: 13 },
-      { animal: 'Gato', numbers: ['53', '54', '55', '56'], group: 14 },
-      { animal: 'Jacaré', numbers: ['57', '58', '59', '60'], group: 15 },
-      { animal: 'Leão', numbers: ['61', '62', '63', '64'], group: 16 },
-      { animal: 'Macaco', numbers: ['65', '66', '67', '68'], group: 17 },
-      { animal: 'Porco', numbers: ['69', '70', '71', '72'], group: 18 },
-      { animal: 'Pavão', numbers: ['73', '74', '75', '76'], group: 19 },
-      { animal: 'Peru', numbers: ['77', '78', '79', '80'], group: 20 },
-      { animal: 'Touro', numbers: ['81', '82', '83', '84'], group: 21 },
-      { animal: 'Tigre', numbers: ['85', '86', '87', '88'], group: 22 },
-      { animal: 'Urso', numbers: ['89', '90', '91', '92'], group: 23 },
-      { animal: 'Veado', numbers: ['93', '94', '95', '96'], group: 24 },
-      { animal: 'Vaca', numbers: ['97', '98', '99', '00'], group: 25 }
-    ];
-
-    const btn = document.getElementById('generateBtn');
-    const resultDiv = document.getElementById('result');
-    const modeSelect = document.getElementById('modeSelect');
-
-    function getRandomInt(max) {
-      return Math.floor(Math.random() * max);
-    }
-
-    function getAnimalOfDay() {
-      const start = new Date(new Date().getFullYear(), 0, 0);
-      const diff = new Date() - start;
-      const oneDay = 1000 * 60 * 60 * 24;
-      const dayOfYear = Math.floor(diff / oneDay);
-      return animalData[dayOfYear % animalData.length];
-    }
-
-    function clearAnimations() {
-      resultDiv.classList.remove(
-        'anim-simple',
-        'anim-dezena',
-        'anim-group',
-        'anim-multiple',
-        'anim-animalOfDay'
-      );
-    }
-
-    btn.addEventListener('click', () => {
-      const mode = modeSelect.value;
-      let output = '';
-      clearAnimations();
-
-      switch(mode) {
-        case 'simple': {
-          const idx = getRandomInt(animalData.length);
-          const animal = animalData[idx];
-          const num = animal.numbers[getRandomInt(animal.numbers.length)];
-          output = `<span class="animal">🦜 ${animal.animal}</span> Número: <span class="number">${num}</span>`;
-          resultDiv.classList.add('anim-simple');
-          break;
-        }
-        case 'dezena': {
-          const idx = getRandomInt(animalData.length);
-          const animal = animalData[idx];
-          let nums = [];
-          while(nums.length < 2) {
-            const n = animal.numbers[getRandomInt(animal.numbers.length)];
-            if(!nums.includes(n)) nums.push(n);
-          }
-          output = `<span class="animal">🔢 ${animal.animal}</span> Dezenas: <span class="number">${nums.join(', ')}</span>`;
-          resultDiv.classList.add('anim-dezena');
-          break;
-        }
-        case 'group': {
-          const idx = getRandomInt(animalData.length);
-          const animal = animalData[idx];
-          output = `<span class="animal">🟣 ${animal.animal}</span> Grupo: <span class="number">${animal.numbers.join(', ')}</span>`;
-          resultDiv.classList.add('anim-group');
-          break;
-        }
-        case 'multiple': {
-          let palpites = [];
-          while(palpites.length < 3) {
-            const idx = getRandomInt(animalData.length);
-            const animal = animalData[idx];
-            const num = animal.numbers[getRandomInt(animal.numbers.length)];
-            const p = `${animal.animal} (${num})`;
-            if(!palpites.includes(p)) palpites.push(p);
-          }
-          output = `🎯 Palpites múltiplos:<br><span class="number">${palpites.join(' | ')}</span>`;
-          resultDiv.classList.add('anim-multiple');
-          break;
-        }
-        case 'animalOfDay': {
-          const animal = getAnimalOfDay();
-          const num = animal.numbers[getRandomInt(animal.numbers.length)];
-          output = `<span class="animal">🌟 ${animal.animal} (Animal do Dia)</span> Número: <span class="number">${num}</span>`;
-          resultDiv.classList.add('anim-animalOfDay');
-          break;
-        }
-        default:
-          output = "Selecione uma modalidade válida.";
-      }
-
-      // efeito fade out e fade in suave
-      resultDiv.style.opacity = 0;
-      setTimeout(() => {
-        resultDiv.innerHTML = output;
-        resultDiv.style.opacity = 1;
-      }, 250);
-    });
+    const animalData=[{animal:'Avestruz',numbers:['01','02','03','04'],group:1},{animal:'Águia',numbers:['05','06','07','08'],group:2},{animal:'Burro',numbers:['09','10','11','12'],group:3},{animal:'Borboleta',numbers:['13','14','15','16'],group:4},{animal:'Cachorro',numbers:['17','18','19','20'],group:5},{animal:'Cabra',numbers:['21','22','23','24'],group:6},{animal:'Carneiro',numbers:['25','26','27','28'],group:7},{animal:'Camelo',numbers:['29','30','31','32'],group:8},{animal:'Cobra',numbers:['33','34','35','36'],group:9},{animal:'Coelho',numbers:['37','38','39','40'],group:10},{animal:'Cavalo',numbers:['41','42','43','44'],group:11},{animal:'Elefante',numbers:['45','46','47','48'],group:12},{animal:'Galo',numbers:['49','50','51','52'],group:13},{animal:'Gato',numbers:['53','54','55','56'],group:14},{animal:'Jacaré',numbers:['57','58','59','60'],group:15},{animal:'Leão',numbers:['61','62','63','64'],group:16},{animal:'Macaco',numbers:['65','66','67','68'],group:17},{animal:'Porco',numbers:['69','70','71','72'],group:18},{animal:'Pavão',numbers:['73','74','75','76'],group:19},{animal:'Peru',numbers:['77','78','79','80'],group:20},{animal:'Touro',numbers:['81','82','83','84'],group:21},{animal:'Tigre',numbers:['85','86','87','88'],group:22},{animal:'Urso',numbers:['89','90','91','92'],group:23},{animal:'Veado',numbers:['93','94','95','96'],group:24},{animal:'Vaca',numbers:['97','98','99','00'],group:25}];
+    const btn=document.getElementById('generateBtn'),resultDiv=document.getElementById('result'),modeSelect=document.getElementById('modeSelect');
+    function getRandomInt(max){return Math.floor(Math.random()*max);}    
+    function getAnimalOfDay(){const start=new Date(new Date().getFullYear(),0,0),diff=new Date()-start,oneDay=1000*60*60*24,dayOfYear=Math.floor(diff/oneDay);return animalData[dayOfYear%animalData.length];}
+    function clearAnimations(){resultDiv.classList.remove('anim-simple','anim-dezena','anim-group','anim-multiple','anim-animalOfDay');}
+    btn.addEventListener('click',()=>{const mode=modeSelect.value;let output='';clearAnimations();switch(mode){case'simple':{const idx=getRandomInt(animalData.length),animal=animalData[idx],num=animal.numbers[getRandomInt(animal.numbers.length)];output=`<span class="animal">🦜 ${animal.animal}</span> Número: <span class="number">${num}</span>`;resultDiv.classList.add('anim-simple');break;}case'dezena':{const idx=getRandomInt(animalData.length),animal=animalData[idx],nums=[];while(nums.length<2){const n=animal.numbers[getRandomInt(animal.numbers.length)];if(!nums.includes(n))nums.push(n);}output=`<span class="animal">🔢 ${animal.animal}</span> Dezenas: <span class="number">${nums.join(', ')}</span>`;resultDiv.classList.add('anim-dezena');break;}case'group':{const idx=getRandomInt(animalData.length),animal=animalData[idx];output=`<span class="animal">🟣 ${animal.animal}</span> Grupo: <span class="number">${animal.numbers.join(', ')}</span>`;resultDiv.classList.add('anim-group');break;}case'multiple':{let picks=[];for(let i=0;i<3;i++){const idx=getRandomInt(animalData.length),animal=animalData[idx],num=animal.numbers[getRandomInt(animal.numbers.length)];picks.push(`🦜 ${animal.animal} (${num})`);}output=`🎯 Palpites múltiplos:<br><span class="number">${picks.join(' | ')}</span>`;resultDiv.classList.add('anim-multiple');break;}case'animalOfDay':{const animal=getAnimalOfDay(),num=animal.numbers[getRandomInt(animal.numbers.length)];output=`<span class="animal">🌟 Animal do Dia: ${animal.animal}</span><br>Números: <span class="number">${animal.numbers.join(', ')}</span>`;resultDiv.classList.add('anim-animalOfDay');break;}default:output='Selecione uma modalidade válida.';}resultDiv.innerHTML=output;});
   </script>
 </body>
 </html>
