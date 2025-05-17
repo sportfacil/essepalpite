@@ -1,4 +1,4 @@
-<!-- Cole tudo isso no elemento HTML do Bubble.io -->
+<!-- Cole isso no elemento HTML do Bubble.io -->
 <div>
   <style>
     :root {
@@ -84,6 +84,13 @@
       transform: scale(1);
       box-shadow: 0 0 20px rgba(127,0,255,0.3);
     }
+    #mensagemInicial {
+      text-align: center;
+      color: #666;
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
     #historico {
       margin-top: 2rem;
       max-height: 250px;
@@ -103,6 +110,16 @@
       padding: 0.4rem 0;
       border-bottom: 1px dashed #eee;
       font-family: monospace;
+    }
+    .rodape {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+    .rodape a {
+      color: var(--destaque);
+      text-decoration: none;
+      font-weight: bold;
     }
   </style>
 
@@ -125,11 +142,16 @@
 
     <button id="btnGerar">Gerar Palpite</button>
 
-    <div id="resultado">Selecione uma modalidade e clique em gerar!</div>
+    <div id="mensagemInicial">🔮 Selecione uma modalidade e clique no botão para ver seu palpite!</div>
+    <div id="resultado"></div>
 
     <div id="historico">
-      <h3>📜 Histórico de Palpites</h3>
+      <h3>📜 Histórico de Palpites de Hoje</h3>
       <div id="listaHistorico"></div>
+    </div>
+
+    <div class="rodape">
+      🔗 Confira também: <a href="https://resultadosbanner.com" target="_blank">resultadosbanner.com</a>
     </div>
   </div>
 
@@ -160,6 +182,7 @@
 
       const fixoEl = document.getElementById('fixoValor');
       const resultadoEl = document.getElementById('resultado');
+      const mensagemEl = document.getElementById('mensagemInicial');
       const historicoLista = document.getElementById('listaHistorico');
       const btn = document.getElementById('btnGerar');
 
@@ -189,18 +212,29 @@
       }
 
       function salvarHistorico(txt) {
-        const dados = JSON.parse(localStorage.getItem('palpites') || '[]');
-        dados.unshift(txt);
+        const hoje = new Date().toISOString().split('T')[0];
+        const dados = JSON.parse(localStorage.getItem('palpites') || '{}');
+        if (!dados[hoje]) dados[hoje] = [];
+        dados[hoje].unshift(txt);
         localStorage.setItem('palpites', JSON.stringify(dados));
       }
 
       function carregarHistorico() {
-        const dados = JSON.parse(localStorage.getItem('palpites') || '[]');
-        dados.forEach(linha => {
+        const hoje = new Date().toISOString().split('T')[0];
+        const dados = JSON.parse(localStorage.getItem('palpites') || '{}');
+        const lista = dados[hoje] || [];
+        lista.forEach(linha => {
           const div = document.createElement('div');
           div.textContent = linha;
           historicoLista.appendChild(div);
         });
+      }
+
+      function limparAntigos() {
+        const hoje = new Date().toISOString().split('T')[0];
+        const dados = JSON.parse(localStorage.getItem('palpites') || '{}');
+        const novos = { [hoje]: dados[hoje] || [] };
+        localStorage.setItem('palpites', JSON.stringify(novos));
       }
 
       function gerar() {
@@ -234,6 +268,7 @@
 
         resultadoEl.innerText = txt;
         resultadoEl.classList.add('mostrar');
+        mensagemEl.style.display = 'none';
 
         const registro = `[${dataHoraAtual()}] ${txt}`;
         const div = document.createElement('div');
@@ -245,6 +280,7 @@
       btn.addEventListener('click', gerar);
       showFixo();
       carregarHistorico();
+      limparAntigos();
     })();
   </script>
 </div>
